@@ -1,0 +1,15 @@
+mqtt:
+  enabled: false
+
+cameras:
+  cam_pano_1: # <------ Name the camera
+    enabled: true
+    ffmpeg:
+      inputs:
+        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.68:554//h264Preview_01_sub
+#          input_args: preset-rtsp-restream
+          roles:
+            - record
+    detect:
+      enabled: false # <---- disable detection until you have a working camera feed
+version: 0.15-1

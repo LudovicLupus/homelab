@@ -1,0 +1,45 @@
+services:
+  frigate:
+    container_name: frigate
+    image: ghcr.io/blakeblackshear/frigate:stable
+    privileged: true
+    restart: unless-stopped
+    shm_size: "512mb"
+#    devices:
+#      - /dev/bus/usb:/dev/bus/usb  # If using USB Coral
+    volumes:
+      - ./config:/config
+      - /storage:/media/frigate
+      - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
+        target: /tmp/cache
+        tmpfs:
+          size: 1000000000
+    ports:
+      - "5000:5000"  # Web UI
+      - "8971:8971"
+      - "8554:8554" # RTSP feeds
+      - "8555:8555/tcp" # WebRTC over tcp
+      - "8555:8555/udp" # WebRTC over udp
+    env_file:
+      - .env
+    networks:
+      - frigate_net
+
+#  nginx:
+#    image: nginx:1.27.3-alpine
+#    container_name: nginx
+#    restart: unless-stopped
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - ./nginx/conf.d:/etc/nginx/conf.d
+#      - ./htpasswd:/etc/nginx/.htpasswd:ro
+##      - ./nginx/certs:/etc/nginx/certs    # SSL certificates (if using HTTPS)
+#    depends_on:
+#      - frigate
+#    env_file:
+#      - .env
+
+networks:
+  frigate_net:

@@ -54,5 +54,21 @@ Generate an SSH Key on Your Local Machine
 # On your host machine (your main computer, not Proxmox), open a terminal and run:
 ssh-keygen -t rsa -b 4096
 # Copy the key to your remote server
-ssh-copy-id ludoviclupus@192.168.50.111
+ssh-copy-id ludoviclupus@192.168.50.35
+ssh-copy-id root@192.168.50.111
+
+:'
+Enable docker context
+'
+# In the remote machine running Docker, run the following:
+sudo mkdir -p /etc/systemd/system/docker.service.d
+echo '[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock' | sudo tee /etc/systemd/system/docker.service.d/override.conf
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+# On the host machine, create the docker context
+docker context create proxmox-vm --docker "host=tcp://your-vm-ip:2375"
+docker context create proxmox-vm --docker "host=tcp://192.168.50.35:2375"
 
