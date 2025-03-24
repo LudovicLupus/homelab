@@ -5,8 +5,8 @@ services:
     privileged: true
     restart: unless-stopped
     shm_size: "512mb"
-#    devices:
-#      - /dev/bus/usb:/dev/bus/usb  # If using USB Coral
+    devices:
+      - /dev/apex_0:/dev/apex_0
     volumes:
       - ./config:/config
       - /storage:/media/frigate

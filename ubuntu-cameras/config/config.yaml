@@ -1,15 +1,28 @@
 mqtt:
   enabled: false
 
+detectors:
+  coral:
+    type: edgetpu
+    device: pci
+
+#snapshots:
+#  enabled: true
+#  bounding_box: true
+
 cameras:
-  cam_pano_1: # <------ Name the camera
+  cam_pano_1:
     enabled: true
     ffmpeg:
       inputs:
         - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.68:554//h264Preview_01_sub
-#          input_args: preset-rtsp-restream
           roles:
             - record
+            - detect
     detect:
-      enabled: false # <---- disable detection until you have a working camera feed
+      enabled: true
+    objects:
+      track:
+        - person
+        - car
 version: 0.15-1
