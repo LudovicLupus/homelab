@@ -127,6 +127,18 @@ cameras:
     detect:
       enabled: true
 
+  cam_back_porch:
+    ffmpeg:
+      inputs:
+        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.115:554//h264Preview_01_sub
+          roles:
+            - detect
+        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.115:554//h264Preview_01_main
+          roles:
+            - record
+    detect:
+      enabled: true
+
   # Hikvision Rear Pano
   cam_rear_pano:
     ffmpeg:
