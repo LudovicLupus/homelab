@@ -5,8 +5,8 @@ mqtt:
   enabled: true
   host: mqtt
   port: 1883
-  user: {MQTT_USER}
-  password: {MQTT_PASSWORD}
+  user: root
+  password: password
   topic_prefix: frigate
   client_id: frigate
   stats_interval: 60
@@ -48,11 +48,13 @@ objects:
 record:
   enabled: true
   retain:
-    days: 0                # Minimum time to retain (0 = as short as possible)
+    days: 7
+    mode: all
   events:
+    pre_capture: 1
+    post_capture: 1
     retain:
-      default: 10          # Optional: Keep event clips for 10 days
-  max_storage_retention_size: 900
+      default: 10
 
 # Snapshots (short clips for events)
 snapshots:
@@ -61,10 +63,7 @@ snapshots:
   bounding_box: true
   crop: false
   retain:
-    person:
-      default: 7
-    car:
-      default: 3
+    default: 14
 
 # Cameras
 cameras:
