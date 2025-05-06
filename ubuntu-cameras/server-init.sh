@@ -72,3 +72,25 @@ sudo systemctl restart docker
 docker context create proxmox-vm --docker "host=tcp://your-vm-ip:2375"
 docker context create proxmox-vm --docker "host=tcp://192.168.50.35:2375"
 
+### On proxmox host
+# Switch to the No-Subscription Repository
+nano /etc/apt/sources.list.d/pve-enterprise.list
+
+# Comment out the enterprise repo (add a # to the line):
+deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise
+
+# Add the no-subscription repo:
+nano /etc/apt/sources.list
+
+# Add this line at the bottom:
+deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+
+# (Optional but recommended) Disable the Ceph Enterprise repo too if you're not using Ceph:
+# Comment out or delete the enterprise.proxmox.com line.
+nano /etc/apt/sources.list.d/ceph.list
+
+# Then Update Again
+apt update
+apt full-upgrade -y
+
+# Now you’ll be pulling from the free community repositories—updates and installs will work fine without subscription nags.

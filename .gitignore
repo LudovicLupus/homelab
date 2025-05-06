@@ -1,0 +1,10 @@
+*.db*
+.DS_Store
+.env
+.exports
+.htpasswd
+.jwt_secret
+.timeline
+.vacuum
+backup_config.yaml
+ubuntu-cameras/mosquitto/config/passwordfile

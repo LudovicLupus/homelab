@@ -1,9 +1,0 @@
-*.conf
-*.db*
-.htpasswd
-backup_config.yaml
-.exports
-.jwt_secret
-.timeline
-.vacuum
-.env
