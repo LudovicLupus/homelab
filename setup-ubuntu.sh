@@ -28,7 +28,7 @@ apt-get install -y \
 GIT_USERNAME=ludoviclupus
 GIT_EMAIL=ludoviclupus@gmail.com
 REPO_URL=https://github.com/LudovicLupus/homelab.git
-CLONE_DIR=$-~/homelab
+CLONE_DIR=~/homelab
 
 git config --global user.name "$GIT_USERNAME"
 git config --global user.email "$GIT_EMAIL"
