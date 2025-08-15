@@ -22,7 +22,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 # Note: You will need to log out and log back in for this to take effect.
 if [ -n "$SUDO_USER" ]; then
   sudo usermod -aG docker "$SUDO_USER"
-  echo "Added user '$SUDO_USER' to the docker group. Please log out and back in to apply changes."
+  echo "Added user '$SUDO_USER' to the docker group. To apply the changes, please log out and back in, or run 'newgrp docker'."
 else
   echo "Warning: Could not determine the user to add to the docker group. Please add manually with 'sudo usermod -aG \$USER docker'."
 fi
