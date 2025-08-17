@@ -72,4 +72,4 @@ networks:
             config:
                 - subnet: 192.168.20.0/24
                   gateway: 192.168.20.1
-                  ip_range: 192.168.20.100/28  # Assign IPs from .100-.115 to containers
+                  ip_range: 192.168.20.96/28  # Assign IPs from .96-.111 to containers
