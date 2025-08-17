@@ -1,159 +1,160 @@
+---
 # Frigate NVR configuration (v0.15+)
 
 # MQTT
 mqtt:
-  enabled: true
-  host: mqtt
-  port: 1883
-  user: root
-  password: password
-  topic_prefix: frigate
-  client_id: frigate
-  stats_interval: 60
+    enabled: true
+    host: mqtt
+    port: 1883
+    user: root
+    password: password
+    topic_prefix: frigate
+    client_id: frigate
+    stats_interval: 60
 
 # FFmpeg
 ffmpeg:
-  hwaccel_args: []          # set if using NVIDIA/Intel/VAAPI etc
-  input_args:               # optional extra args for your streams
-    - -avoid_negative_ts
-    - make_zero
+    hwaccel_args: []        # set if using NVIDIA/Intel/VAAPI etc
+    input_args:             # optional extra args for your streams
+        - -avoid_negative_ts
+        - make_zero
 
 # Detectors
 detectors:
-  coral:
-    type: edgetpu
-    device: pci
+    coral:
+        type: edgetpu
+        device: pci
 
 # Global Detection Settings
 detect:
-  enabled: true
-  fps: 5
+    enabled: true
+    fps: 5
 
 # Objects
 objects:
-  track:
-    - person
-    - car
-  filters:
-    person:
-      min_area: 5000
-      max_area: 100000
-      threshold: 0.7
-    car:
-      min_area: 10000
-      max_area: 250000
-      threshold: 0.7
+    track:
+        - person
+        - car
+    filters:
+        person:
+            min_area: 5000
+            max_area: 100000
+            threshold: 0.7
+        car:
+            min_area: 10000
+            max_area: 250000
+            threshold: 0.7
 
 # Recording (continuous + review)
 record:
-  enabled: true
-  retain:
-    days: 7
-    mode: all
-  events:
-    pre_capture: 1
-    post_capture: 1
+    enabled: true
     retain:
-      default: 10
+        days: 7
+        mode: all
+    events:
+        pre_capture: 1
+        post_capture: 1
+        retain:
+            default: 10
 
 # Snapshots (short clips for events)
 snapshots:
-  enabled: true
-  timestamp: true
-  bounding_box: true
-  crop: false
-  retain:
-    default: 14
+    enabled: true
+    timestamp: true
+    bounding_box: true
+    crop: false
+    retain:
+        default: 14
 
 # Cameras
 cameras:
-  cam_front_pano:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.70:554//h264Preview_01_sub
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.70:554//h264Preview_01_main
-          roles:
-            - record
-    detect:
-      enabled: true
-    motion:
-      mask:
-        - 0.768,0.311,0.982,0.521,0.964,0.644,0.751,0.432,0.717,0.384
-    objects:
-      mask:
-        - 0.768,0.311,0.982,0.521,0.964,0.644,0.751,0.432,0.717,0.384
+    cam_front_pano:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.70:554//h264Preview_01_sub
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.70:554//h264Preview_01_main
+                  roles:
+                      - record
+        detect:
+            enabled: true
+        motion:
+            mask:
+                - 0.768,0.311,0.982,0.521,0.964,0.644,0.751,0.432,0.717,0.384
+        objects:
+            mask:
+                - 0.768,0.311,0.982,0.521,0.964,0.644,0.751,0.432,0.717,0.384
 
-  cam_front_porch:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.123:554//h264Preview_01_sub
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.123:554//h264Preview_01_main
-          roles:
-            - record
-    detect:
-      enabled: true
+    cam_front_porch:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.123:554//h264Preview_01_sub
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.123:554//h264Preview_01_main
+                  roles:
+                      - record
+        detect:
+            enabled: true
 
-  cam_north_entrance:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.124:554//h264Preview_01_sub
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.124:554//h264Preview_01_main
-          roles:
-            - record
-    detect:
-      enabled: true
+    cam_north_entrance:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.124:554//h264Preview_01_sub
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.124:554//h264Preview_01_main
+                  roles:
+                      - record
+        detect:
+            enabled: true
 
-  cam_south_entrance:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.156:554//h264Preview_01_sub
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.156:554//h264Preview_01_main
-          roles:
-            - record
-    detect:
-      enabled: true
+    cam_south_entrance:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.156:554//h264Preview_01_sub
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.156:554//h264Preview_01_main
+                  roles:
+                      - record
+        detect:
+            enabled: true
 
-  cam_driveway:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.251:554//h264Preview_01_sub
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.251:554//h264Preview_01_main
-          roles:
-            - record
-    detect:
-      enabled: true
+    cam_driveway:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.251:554//h264Preview_01_sub
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.251:554//h264Preview_01_main
+                  roles:
+                      - record
+        detect:
+            enabled: true
 
-  cam_back_porch:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.115:554//h264Preview_01_sub
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.50.115:554//h264Preview_01_main
-          roles:
-            - record
-    detect:
-      enabled: true
+    cam_back_porch:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.115:554//h264Preview_01_sub
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_REOLINK_PASSWORD}@192.168.20.115:554//h264Preview_01_main
+                  roles:
+                      - record
+        detect:
+            enabled: true
 
   # Hikvision Rear Pano
-  cam_rear_pano:
-    ffmpeg:
-      inputs:
-        - path: rtsp://admin:{FRIGATE_HIKVISION_PASSWORD}@192.168.50.250:554/Streaming/Channels/102/
-          roles:
-            - detect
-        - path: rtsp://admin:{FRIGATE_HIKVISION_PASSWORD}@192.168.50.250:554/Streaming/Channels/101/
-          roles:
-            - record
-    detect:
-      enabled: true
+    cam_rear_pano:
+        ffmpeg:
+            inputs:
+                - path: rtsp://admin:{FRIGATE_HIKVISION_PASSWORD}@192.168.20.250:554/Streaming/Channels/102/
+                  roles:
+                      - detect
+                - path: rtsp://admin:{FRIGATE_HIKVISION_PASSWORD}@192.168.20.250:554/Streaming/Channels/101/
+                  roles:
+                      - record
+        detect:
+            enabled: true

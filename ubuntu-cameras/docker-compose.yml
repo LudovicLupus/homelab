@@ -59,7 +59,17 @@ services:
             - mqtt
         networks:
             - frigate_net
+            - camera_vlan
 
 networks:
     frigate_net:
         driver: bridge
+    camera_vlan:
+        driver: macvlan
+        driver_opts:
+            parent: enp37s0f0
+        ipam:
+            config:
+                - subnet: 192.168.20.0/24
+                  gateway: 192.168.20.1
+                  ip_range: 192.168.20.100/28  # Assign IPs from .100-.115 to containers
