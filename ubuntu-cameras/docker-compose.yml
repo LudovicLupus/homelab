@@ -1,64 +1,65 @@
+---
 version: '3.8'
 
 services:
-  mqtt:
-    image: eclipse-mosquitto:2.0
-    container_name: mqtt
-    restart: unless-stopped
-    ports:
-      - "1883:1883"     # MQTT
-      - "9001:9001"     # WebSockets (optional)
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-    networks:
-      - frigate_net
+    mqtt:
+        image: eclipse-mosquitto:2.0
+        container_name: mqtt
+        restart: unless-stopped
+        ports:
+            - 1883:1883 # MQTT
+            - 9001:9001 # WebSockets (optional)
+        volumes:
+            - ./mosquitto/config:/mosquitto/config
+            - ./mosquitto/data:/mosquitto/data
+            - ./mosquitto/log:/mosquitto/log
+        networks:
+            - frigate_net
 
-  homeassistant:
-    image: ghcr.io/home-assistant/home-assistant:stable
-    container_name: homeassistant
-    restart: unless-stopped
-    environment:
-      - TZ=America/New_York
-    volumes:
-      - ./homeassistant/config:/config
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "8123:8123"     # HA Web UI
-    depends_on:
-      - mqtt
-    networks:
-      - frigate_net
+#  homeassistant:
+#    image: ghcr.io/home-assistant/home-assistant:stable
+#    container_name: homeassistant
+#    restart: unless-stopped
+#    environment:
+#      - TZ=America/New_York
+#    volumes:
+#      - ./homeassistant/config:/config
+#      - /etc/localtime:/etc/localtime:ro
+#    ports:
+#      - "8123:8123"     # HA Web UI
+#    depends_on:
+#      - mqtt
+#    networks:
+#      - frigate_net
 
-  frigate:
-    container_name: frigate
-    image: ghcr.io/blakeblackshear/frigate:stable
-    privileged: true
-    restart: unless-stopped
-    shm_size: "512mb"
-    devices:
-      - /dev/apex_0:/dev/apex_0
-    volumes:
-      - ./config:/config
-      - /media/frigate:/media/frigate
-      - type: tmpfs
-        target: /tmp/cache
-        tmpfs:
-          size: 1000000000
-    ports:
-      - "5000:5000"
-      - "8971:8971"
-      - "8554:8554"
-      - "8555:8555/tcp"
-      - "8555:8555/udp"
-    env_file:
-      - .env
-    depends_on:
-      - mqtt
-    networks:
-      - frigate_net
+    frigate:
+        container_name: frigate
+        image: ghcr.io/blakeblackshear/frigate:stable
+        privileged: true
+        restart: unless-stopped
+        shm_size: 512mb
+        devices:
+            - /dev/apex_0:/dev/apex_0
+        volumes:
+            - ./config:/config
+            - /media/frigate:/media/frigate
+            - type: tmpfs
+              target: /tmp/cache
+              tmpfs:
+                  size: 1000000000
+        ports:
+            - 5000:5000
+            - 8971:8971
+            - 8554:8554
+            - 8555:8555/tcp
+            - 8555:8555/udp
+        env_file:
+            - .env
+        depends_on:
+            - mqtt
+        networks:
+            - frigate_net
 
 networks:
-  frigate_net:
-    driver: bridge
+    frigate_net:
+        driver: bridge
