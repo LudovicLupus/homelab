@@ -32,3 +32,7 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 echo "Docker and Docker Compose installed and enabled successfully."
+
+# Create context for remotely managing docker
+docker context create homelab-server --docker "host=ssh://ludoviclupus@192.168.50.183"
+echo "Docker context successfully created."
