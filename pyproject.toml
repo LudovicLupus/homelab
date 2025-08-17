@@ -15,7 +15,7 @@ dev-dependencies = [
   "mypy>=1.8",
   "ruff>=0.6.0",
   "bandit>=1.7.9",
-  "types-setuptools>=69.0.0; python_version<'3.11'"
+  "types-setuptools>=69.0.0; python_version<'3.11'",
 ]
 
 [tool.ruff]

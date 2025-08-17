@@ -1,0 +1,37 @@
+### System & Project Context Summary
+
+**1. High-Level Overview:**
+- **System:** A dedicated server running Frigate NVR for security camera monitoring and recording.
+- **Core Technology:** Frigate leverages a PCIe Google Coral TPU for real-time, low-power AI object detection.
+- **Environment:** Services are containerized using Docker and managed with `docker-compose`.
+
+**2. Host System Details:**
+- **Operating System:** Ubuntu Server 24.04.3
+- **Kernel Version:** 6.8.0-71-generic
+- **CPU:** AMD Threadripper
+- **Primary Hardware Accelerator:** Google Coral Edge TPU (PCIe version).
+
+**3. Application & Service Architecture:**
+- **Docker Compose (`docker-compose.yml`):**
+    - `frigate`: The main NVR application. It runs in a privileged container and requires `/dev/apex_0` to be passed through from the host to access the Coral TPU. It also has a large `shm_size` (512mb) allocated.
+    - `mqtt`: An Eclipse Mosquitto MQTT broker used for communication between Frigate and other potential services (like the commented-out Home Assistant).
+    - `frigate_net`: A dedicated bridge network for inter-service communication.
+- **Frigate Configuration (`config.yaml`):**
+    - **Detector:** Explicitly configured to use the Coral TPU via `type: edgetpu` and `device: pci`.
+    - **Cameras:** Integrates with multiple RTSP-based cameras (Reolink, Hikvision), using separate streams for high-res recording and low-res detection.
+    - **Objects:** Primarily configured to track `person` and `car` objects.
+
+**4. Critical Technical Issue & Resolution:**
+The primary challenge in setting up this system was making the PCIe Coral TPU available to the Frigate container.
+- **Initial Problem:** Frigate failed to start, with logs indicating `ValueError: Failed to load delegate from libedgetpu.so.1.0` and `No EdgeTPU was detected`.
+- **Root Cause:** The host's kernel (6.8.0-71-generic) did not natively include the `apex` driver required for the TPU. The fallback `gasket-dkms` driver package from Google's repository was incompatible with the new kernel and failed to compile.
+- **Solution Steps:**
+    1.  Installed `gasket-dkms` to get the driver source code.
+    2.  Manually patched two source files (`/usr/src/gasket-1.0/gasket_interrupt.c` and `gasket_core.c`) to fix breaking changes in the kernel's API (`eventfd_signal` and `class_create` functions).
+    3.  Repaired the `gasket-dkms` installation (`sudo apt-get install -f`), which successfully compiled and installed the patched driver via DKMS.
+    4.  Manually loaded the driver (`sudo modprobe apex`), which created the `/dev/apex_0` device node on the host.
+    5.  Ensured the `docker-compose.yml` correctly passed `/dev/apex_0` to the Frigate container.
+
+**5. Setup Scripts:**
+- **`setup-coral-tpu.sh`:** A key script intended to configure the TPU. The original version was flawed for this kernel, as it incorrectly assumed the `apex` driver was built-in and tried to delete it. The script must be modified to install `gasket-dkms` and its dependencies (`linux-headers`) instead.
+- **`setup-ubuntu.sh`, `setup-nvidia.sh`:** Standard scripts for provisioning the server with basic tools and drivers (though the NVIDIA script is not directly relevant to the Frigate+Coral setup).
