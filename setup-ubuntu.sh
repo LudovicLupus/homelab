@@ -46,6 +46,17 @@ sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/coral.gpg
 echo "deb [signed-by=/etc/apt/keyrings/coral.gpg] https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list >/dev/null
 
-# Update package list and install the Edge TPU runtime
+# Update package list and install the Edge TPU runtime and PCIe drivers
 sudo apt-get update
-sudo apt-get install -y libedgetpu1-std
+
+# Install kernel headers for DKMS (if available for the running kernel)
+if apt-cache show "linux-headers-$(uname -r)" >/dev/null 2>&1; then
+  sudo apt-get install -y "linux-headers-$(uname -r)"
+fi
+
+sudo apt-get install -y libedgetpu1-std dkms gasket-dkms
+
+# Load Coral PCIe kernel modules now and ensure they load at boot
+sudo modprobe gasket || true
+sudo modprobe apex || true
+echo -e "gasket\napex" | sudo tee /etc/modules-load.d/coral.conf >/dev/null

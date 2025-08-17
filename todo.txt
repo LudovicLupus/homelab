@@ -1,0 +1,1 @@
+Add fzf to ubuntu server so that the user can easily fuzzy search for past commands.
