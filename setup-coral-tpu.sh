@@ -9,12 +9,9 @@ set -e
 echo "=== Coral TPU (PCIe) setup for AMD on Ubuntu 24.04 ==="
 
 # 1) Clean slate: purge any previously installed DKMS/gasket/Coral packages
-echo "[1/5] Purging any existing Coral TPU and DKMS packages (clean slate)"
-sudo apt-get remove --purge -y gasket-dkms dkms libedgetpu1-std libedgetpu1-max libedgetpu-dev || true
+echo "[1/5] Purging any conflicting Coral TPU packages"
+sudo apt-get remove --purge -y libedgetpu1-max libedgetpu-dev || true
 sudo apt-get autoremove -y || true
-sudo rm -rf /var/lib/dkms/gasket || true
-sudo find /lib/modules/"$(uname -r)"/ -type f \( -name "*gasket*" -o -name "*apex*" \) -exec rm -f {} + || true
-sudo depmod -a || true
 
 # 2) Enable AMD IOMMU (required for reliable PCIe device handling)
 echo "[2/5] Configuring AMD IOMMU (amd_iommu=on iommu=pt) in GRUB if missing"
@@ -43,13 +40,20 @@ else
   echo "Warning: $GRUB_FILE not found; skipping GRUB configuration."
 fi
 
-# 3) Add Coral APT repository and install the runtime
-echo "[3/5] Adding Coral APT repo and installing libedgetpu1-std (runtime only)"
+# 3) Add Coral APT repository and install the runtime and driver
+echo "[3/5] Adding Coral APT repo and installing libedgetpu1-std, kernel headers, and gasket-dkms"
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/coral.gpg
 echo "deb [signed-by=/etc/apt/keyrings/coral.gpg] https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list >/dev/null
 sudo apt-get update
-sudo apt-get install -y libedgetpu1-std
+# Install the headers needed for DKMS, the runtime, and the driver itself
+sudo apt-get install -y linux-headers-"$(uname -r)" libedgetpu1-std gasket-dkms
+
+# Note: On some newer kernels, gasket-dkms may fail to build.
+# If it does, you may need to manually patch the source files:
+# sudo sed -i 's/eventfd_signal(ctx, 1)/eventfd_signal(ctx)/g' /usr/src/gasket-1.0/gasket_interrupt.c
+# sudo sed -i 's/class_create(driver_desc->module, driver_desc->name)/class_create(driver_desc->name)/g' /usr/src/gasket-1.0/gasket_core.c
+# And then run: sudo apt-get install -f
 
 # 4) Load in-kernel 'apex' driver now and ensure it loads at boot
 echo "[4/5] Loading 'apex' kernel module and configuring auto-load"

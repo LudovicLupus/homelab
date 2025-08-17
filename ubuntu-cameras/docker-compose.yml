@@ -40,7 +40,6 @@ services:
         shm_size: 512mb
         devices:
             - /dev/apex_0:/dev/apex_0
-            - /dev/bus/usb:/dev/bus/usb
         volumes:
             - ./config:/config
             - /media/frigate:/media/frigate
