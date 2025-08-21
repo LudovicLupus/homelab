@@ -40,7 +40,7 @@ services:
             - /dev/apex_0:/dev/apex_0
         volumes:
             - ./config:/config
-            - /media/frigate:/media/frigate
+            - /mnt/frigate-storage:/media/frigate
             - type: tmpfs
               target: /tmp/cache
               tmpfs:
