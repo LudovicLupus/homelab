@@ -74,6 +74,32 @@ services:
             - 11434:11434
         restart: unless-stopped
 
+    open-webui:
+        image: ghcr.io/open-webui/open-webui:main
+        container_name: open-webui
+        depends_on:
+            - ollama
+        ports:
+            - 3000:8080 # Access the UI on port 3000 of your server
+        environment:
+            - OLLAMA_BASE_URL=http://ollama:11434
+        volumes:
+            - ./open-webui_data:/app/backend/data
+        restart: unless-stopped
+
+    postgres-vector:
+        image: pgvector/pgvector:pg16 # Use a pre-built image with the extension
+        container_name: postgres-vector
+        environment:
+            - POSTGRES_USER=myuser
+            - POSTGRES_PASSWORD=mypassword
+            - POSTGRES_DB=mydatabase
+        ports:
+            - 5432:5432
+        volumes:
+            - ./postgres_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
 networks:
     frigate_net:
         driver: bridge
