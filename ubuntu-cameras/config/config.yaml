@@ -35,6 +35,9 @@ objects:
     track:
         - person
         - car
+        - cat
+        - bicycle
+        - motorcycle
     filters:
         person:
             min_area: 5000
