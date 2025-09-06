@@ -58,6 +58,46 @@ services:
         networks:
             - frigate_net
 
+    ml-processor:
+        build: ./ml-processor
+        container_name: ml-processor
+        restart: unless-stopped
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [gpu]
+        volumes:
+            - /mnt/frigate-storage:/media/frigate:ro
+            - ./ml-processor/models:/app/models
+            - ./ml-processor/data:/app/data
+            - ./ml-processor/logs:/app/logs
+        environment:
+            - MQTT_HOST=mqtt
+            - MQTT_PORT=1883
+            - FRIGATE_API_URL=http://frigate:5000
+            - POSTGRES_URL=postgresql://myuser:mypassword@postgres-vector:5432/mydatabase
+            - CUDA_VISIBLE_DEVICES=0
+        depends_on:
+            - mqtt
+            - frigate
+            - postgres-vector
+        networks:
+            - frigate_net
+
+    redis:
+        image: redis:7-alpine
+        container_name: redis
+        restart: unless-stopped
+        ports:
+            - 6379:6379
+        volumes:
+            - ./redis_data:/data
+        networks:
+            - frigate_net
+
     ollama:
         image: ollama/ollama
         container_name: ollama
@@ -73,6 +113,8 @@ services:
         ports:
             - 11434:11434
         restart: unless-stopped
+        networks:
+            - frigate_net
 
     open-webui:
         image: ghcr.io/open-webui/open-webui:main
@@ -80,15 +122,17 @@ services:
         depends_on:
             - ollama
         ports:
-            - 3000:8080 # Access the UI on port 3000 of your server
+            - 3000:8080
         environment:
             - OLLAMA_BASE_URL=http://ollama:11434
         volumes:
             - ./open-webui_data:/app/backend/data
         restart: unless-stopped
+        networks:
+            - frigate_net
 
     postgres-vector:
-        image: pgvector/pgvector:pg16 # Use a pre-built image with the extension
+        image: pgvector/pgvector:pg16
         container_name: postgres-vector
         environment:
             - POSTGRES_USER=myuser
@@ -99,6 +143,8 @@ services:
         volumes:
             - ./postgres_data:/var/lib/postgresql/data
         restart: unless-stopped
+        networks:
+            - frigate_net
 
 networks:
     frigate_net:

@@ -35,3 +35,18 @@ The primary challenge in setting up this system was making the PCIe Coral TPU av
 **5. Setup Scripts:**
 - **`setup-coral-tpu.sh`:** A key script intended to configure the TPU. The original version was flawed for this kernel, as it incorrectly assumed the `apex` driver was built-in and tried to delete it. The script must be modified to install `gasket-dkms` and its dependencies (`linux-headers`) instead.
 - **`setup-ubuntu.sh`, `setup-nvidia.sh`:** Standard scripts for provisioning the server with basic tools and drivers (though the NVIDIA script is not directly relevant to the Frigate+Coral setup).
+
+**6. Machine Learning Development:**
+- **Hardware Acceleration:** In addition to the Google Coral TPU, the system now incorporates an AI-capable NVIDIA GPU for expanded machine learning capabilities.
+- **Docker Services:** The docker-compose stack has been expanded beyond Frigate to include:
+  - **ml-processor:** Custom Python-based machine learning pipeline specifically designed for facial detection and recognition.
+  - **postgres-vector:** PostgreSQL database with pgvector extension for efficient storage and similarity search of face embeddings.
+  - **ollama:** Self-hosted large language model service running on the NVIDIA GPU.
+  - **open-webui:** Web interface for interacting with Ollama models.
+- **Integration Architecture:** The system uses MQTT as a message broker to receive events from Frigate that trigger ML processing tasks.
+- **Development Approach:** Implementation follows test-driven development principles with a focus on maintaining integration and unit tests for the core ML pipeline functionality.
+- **Face Recognition Pipeline:**
+  - Receives person detection events via MQTT from Frigate
+  - Applies facial detection and recognition using a combination of specialized models
+  - Stores face embeddings in the vector database for efficient similarity matching
+  - Integrates with the existing Frigate system for a comprehensive security solution

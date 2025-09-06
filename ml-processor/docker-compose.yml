@@ -1,0 +1,25 @@
+---
+services:
+    ml-processor-dev:
+        build: ./ml-processor
+        container_name: ml-processor-dev
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [gpu]
+        volumes:
+            - /mnt/frigate-storage:/media/frigate:ro
+            - ./models:/app/models
+            - ./data:/app/data
+            - ./logs:/app/logs
+            - ./src:/app/src # Mount source code directly
+        environment:
+            - MQTT_HOST=localhost # Point to host network instead
+            - MQTT_PORT=1883
+            - FRIGATE_API_URL=http://localhost:5000 # Point to host network
+            - POSTGRES_URL=postgresql://myuser:mypassword@localhost:5432/mydatabase
+            - CUDA_VISIBLE_DEVICES=0
+        network_mode: host # Use host network to simplify connectivity
