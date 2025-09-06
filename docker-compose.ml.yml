@@ -1,7 +1,7 @@
 ---
 services:
     ml-processor-dev:
-        build: ./
+        build: ./ml-processor
         container_name: ml-processor-dev
         deploy:
             resources:
@@ -12,10 +12,10 @@ services:
                           capabilities: [gpu]
         volumes:
             - /mnt/frigate-storage:/media/frigate:ro
-            - ./models:/app/models
-            - ./data:/app/data
-            - ./logs:/app/logs
-            - ./src:/app/src # Mount source code directly
+            - ./ml-processor/models:/app/models
+            - ./ml-processor/data:/app/data
+            - ./ml-processor/logs:/app/logs
+            - ./ml-processor/src:/app/src # Mount source code directly
         environment:
             - MQTT_HOST=localhost # Point to host network instead
             - MQTT_PORT=1883
