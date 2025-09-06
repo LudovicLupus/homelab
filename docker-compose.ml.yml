@@ -1,7 +1,9 @@
 ---
 services:
     ml-processor-dev:
-        build: ./ml-processor
+        build:
+            context: ./
+            dockerfile: ./ml-processor/Dockerfile
         container_name: ml-processor-dev
         deploy:
             resources:
