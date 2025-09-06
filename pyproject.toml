@@ -5,17 +5,17 @@ description = "Machine learning processor for Frigate security system"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "insightface>=0.7.3",
-  "loguru>=0.7.0",
-  "numpy>=1.24.0",
-  "onnxruntime-gpu>=1.16.0",
-  "opencv-python>=4.8.0",
-  "paho-mqtt>=2.2.1",
-  "pgvector>=0.2.3",
-  "psycopg2-binary>=2.9.9",
-  "requests>=2.31.0",
-  "sqlalchemy>=2.0.0",
-  "torch>=2.1.0",
+  "insightface",
+  "loguru",
+  "numpy",
+  "onnxruntime",
+  "opencv-python",
+  "paho-mqtt",
+  "pgvector",
+  "psycopg2-binary",
+  "requests",
+  "sqlalchemy",
+  "torch",
 ]
 
 [tool.uv]
