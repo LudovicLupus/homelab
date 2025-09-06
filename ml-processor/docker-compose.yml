@@ -1,7 +1,7 @@
 ---
 services:
     ml-processor-dev:
-        build: ./ml-processor
+        build: ./
         container_name: ml-processor-dev
         deploy:
             resources:
